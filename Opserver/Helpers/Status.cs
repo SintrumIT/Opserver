@@ -41,7 +41,7 @@ namespace StackExchange.Opserver.Helpers
 
 				public static IHtmlString StatusSpan(string statusClass, string tooltip = null)
         {
-            return $"<span class=\"{statusClass}\">{(tooltip.HasValue() ? "title=\"" + tooltip.HtmlEncode() + "\"" : "")}</span>".AsHtml();
+            return $"<span class=\"{statusClass}\">{(tooltip.HasValue() ? "Status: " + tooltip.HtmlEncode() : "")}</span>".AsHtml();
         }
     }
 }
