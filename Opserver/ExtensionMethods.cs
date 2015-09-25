@@ -120,6 +120,25 @@ namespace StackExchange.Opserver
             }
         }
 
+				public static IHtmlString StatusSpan(this IMonitorStatus status)
+        {
+            if (status == null)
+                return StatusIndicator.StatusSpan(StatusIndicator.UnknownClass);
+
+            switch (status.MonitorStatus)
+            {
+                case MonitorStatus.Good:
+                    return StatusIndicator.StatusSpan(StatusIndicator.UpClass);
+                case MonitorStatus.Warning:
+                case MonitorStatus.Maintenance:
+                    return StatusIndicator.StatusSpan(StatusIndicator.WarningClass, status.MonitorStatusReason);
+                case MonitorStatus.Critical:
+                    return StatusIndicator.StatusSpan(StatusIndicator.DownClass, status.MonitorStatusReason);
+                default:
+                    return StatusIndicator.StatusSpan(StatusIndicator.UnknownClass, status.MonitorStatusReason);
+            }
+        }
+
         public static IHtmlString Span(this MonitorStatus status, string text, string tooltip = null)
         {
             switch (status)

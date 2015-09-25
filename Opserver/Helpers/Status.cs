@@ -38,5 +38,10 @@ namespace StackExchange.Opserver.Helpers
         {
             return $"<span class=\"status-icon {statusClass} icon\"{(tooltip.HasValue() ? "title=\"" + tooltip.HtmlEncode() + "\"" : "")}>●</span>".AsHtml();
         }
+
+				public static IHtmlString StatusSpan(string statusClass, string tooltip = null)
+        {
+            return $"<span class=\"{statusClass}\">{(tooltip.HasValue() ? "title=\"" + tooltip.HtmlEncode() + "\"" : "")}</span>".AsHtml();
+        }
     }
 }

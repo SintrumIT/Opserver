@@ -24,7 +24,7 @@
 <div class="bottom-sub-section">
 <div class="summary-dashboard">
     <h3 class="header">
-        <a href="/sql/servers">SQL Instances</a><span class="note">:</span> @i.IconSpan() @i.Name
+        <a href="/sql/servers">SQL Instances</a><span class="note">:</span> @i.StatusSpan() @i.Name
         @Helpers.PollNow(i)
     </h3>
 @if (i.LastFetch == null)
