@@ -344,31 +344,59 @@ Select db.database_id Id,
             }
 
             internal const string FetchSQL = @"
-Select vs.volume_id VolumeId,
-       vs.volume_mount_point VolumeMountPoint, 
-       vs.logical_volume_name LogicalVolumeName,
-       mf.database_id DatabaseId,
-       DB_Name(mf.database_id) DatabaseName,
-       mf.file_id FileId,
-       mf.name FileName,
-       mf.physical_name PhysicalName,
-       mf.data_space_id DataSpaceId,
-       mf.type FileType,
-       mf.state FileState,
-       mf.size FileSizePages,
-       mf.max_size FileMaxSizePages,
-       mf.growth FileGrowthRaw,
-       mf.is_percent_growth FileIsPercentGrowth,
-       mf.is_read_only FileIsReadOnly,
-       fs.io_stall_read_ms StallReadMs,
-       fs.num_of_reads NumReads,
-       fs.io_stall_write_ms StallWriteMs,
-       fs.num_of_writes NumWrites
-  From sys.dm_io_virtual_file_stats(null, null) fs
-       Join sys.master_files mf 
-         On fs.database_id = mf.database_id
-         And fs.file_id = mf.file_id
-       Cross Apply sys.dm_os_volume_stats(mf.database_id, mf.file_id) vs";
+            Declare @version varchar(50) = @@VERSION
+
+            If @version Like '%SQL Server 2008%'
+            Begin
+	            Select '' VolumeId,
+                   'SQL 2008: Databasefiles check not supported' VolumeMountPoint, 
+                   '' LogicalVolumeName,
+                   1 DatabaseId,
+                   'SQL 2008: Databasefiles check not supported' DatabaseName,
+                   1 FileId,
+                   'SQL 2008: Databasefiles check not supported' FileName,
+                   'SQL 2008: Databasefiles check not supported' PhysicalName,
+                   0 DataSpaceId,
+                   0 FileType,
+                   0 FileState,
+                   1 FileSizePages,
+                   -1 FileMaxSizePages,
+                   128 FileGrowthRaw,
+                   0 FileIsPercentGrowth,
+                   0 FileIsReadOnly,
+                   1 StallReadMs,
+                   1 NumReads,
+                   1 StallWriteMs,
+                   1 NumWrites
+            End
+            Else
+            Begin
+	            Select vs.volume_id VolumeId,
+                   vs.volume_mount_point VolumeMountPoint, 
+                   vs.logical_volume_name LogicalVolumeName,
+                   mf.database_id DatabaseId,
+                   DB_Name(mf.database_id) DatabaseName,
+                   mf.file_id FileId,
+                   mf.name FileName,
+                   mf.physical_name PhysicalName,
+                   mf.data_space_id DataSpaceId,
+                   mf.type FileType,
+                   mf.state FileState,
+                   mf.size FileSizePages,
+                   mf.max_size FileMaxSizePages,
+                   mf.growth FileGrowthRaw,
+                   mf.is_percent_growth FileIsPercentGrowth,
+                   mf.is_read_only FileIsReadOnly,
+                   fs.io_stall_read_ms StallReadMs,
+                   fs.num_of_reads NumReads,
+                   fs.io_stall_write_ms StallWriteMs,
+                   fs.num_of_writes NumWrites
+              From sys.dm_io_virtual_file_stats(null, null) fs
+                   Join sys.master_files mf 
+                     On fs.database_id = mf.database_id
+                     And fs.file_id = mf.file_id
+                   Cross Apply sys.dm_os_volume_stats(mf.database_id, mf.file_id) vs
+            End";
 
             public string GetFetchSQL(Version v)
             {
